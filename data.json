@@ -1,0 +1,46 @@
+{
+  "users": {
+    "user_1781192087810": {
+      "id": "user_1781192087810",
+      "name": "TestUser",
+      "pin": "1234",
+      "isAdmin": false,
+      "createdAt": "2026-06-11T15:34:47.810Z"
+    },
+    "user_1781211828143": {
+      "id": "user_1781211828143",
+      "name": "Juan",
+      "pin": "1234",
+      "isAdmin": false,
+      "createdAt": "2026-06-11T21:03:48.144Z"
+    }
+  },
+  "predictions": {
+    "user_1781192087810": {},
+    "user_1781211828143": {
+      "G-A-1": {
+        "team1Score": 2,
+        "team2Score": 1
+      }
+    },
+    "user_1": {
+      "G-A-1": {
+        "team1": 2
+      }
+    }
+  },
+  "knockoutSelections": {
+    "user_1781192087810": {},
+    "user_1781211828143": {}
+  },
+  "realResults": {
+    "G-A-1": {
+      "team1Score": 2,
+      "team2Score": 1,
+      "status": "completed",
+      "winner": "A1",
+      "timestamp": "2026-06-11T21:03:48.166Z"
+    }
+  },
+  "knockoutResults": {}
+}
