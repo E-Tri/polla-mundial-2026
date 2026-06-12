@@ -1,0 +1,64 @@
+===============================================
+  POLLA MUNDIAL 2026 - ARCHIVOS PARA DESCARGAR
+===============================================
+
+ARCHIVOS ACTUALIZADOS (6 archivos):
+
+1. index.html   (72 KB) - Frontend con registro prominente
+2. server.js    (13 KB) - Backend Express
+3. matches.js   (16 KB) - Datos de 72 partidos
+4. package.json (301 B) - Configuración npm
+5. data.json    (919 B) - Base de datos local
+6. INSTRUCCIONES.txt - Este archivo
+
+===============================================
+  CAMBIOS REALIZADOS EN ESTA ACTUALIZACIÓN:
+===============================================
+
+✅ Registro de usuarios más visible (botón grande "Crear nueva cuenta")
+✅ Auto-actualización cada 30 segundos (resultados, tabla, puntos)
+✅ Mejor UX en pantalla de login
+✅ Instrucciones de colores FIFA aplicados
+
+===============================================
+  PARA SUBIR A GITHUB:
+===============================================
+
+1. Ve a https://github.com/TU_USUARIO/polla-mundial-2026
+
+2. Haz clic en cada archivo anterior:
+   - index.html
+   - server.js  
+   - matches.js
+   - package.json
+   - data.json
+
+3. Para cada archivo:
+   - Haz clic en el nombre del archivo
+   - Haz clic en el icono ✏️ (editar)
+   - Copia el contenido del archivo correspondiente
+   - Pegalo en el editor
+   - Haz clic en "Commit changes"
+
+4. Después de actualizar TODOS los archivos,
+   ve a Settings > Pages > Source: Deploy from a branch
+   Branch: main, Folder: / (root)
+
+5. Espera 2-3 minutos y tu app estará en:
+   https://TU_USUARIO.github.io/polla-mundial-2026
+
+===============================================
+  NOTA SOBRE ACTUALIZACIÓN DE RESULTADOS FIFA:
+===============================================
+
+La aplicación NO se conecta automáticamente a la FIFA.
+Los resultados deben ser ingresados manualmente por el ADMIN:
+
+1. Un admin debe registrarse con código: ADMIN2026
+2. El admin ve la pestaña "Admin" después de entrar
+3. El admin ingresa el marcador de cada partido
+
+Los resultados SE ACTUALIZAN AUTOMÁTICAMENTE para todos
+los usuarios cada 30 segundos sin recargar la página.
+
+===============================================

@@ -640,7 +640,12 @@
           <input type="password" class="form-input" id="loginPin" placeholder="••••" maxlength="4" inputmode="numeric">
         </div>
         <button class="btn btn-primary" id="loginBtn" onclick="login()">Entrar a la Polla</button>
-        <p class="auth-switch">¿Nuevo? <a onclick="showRegister()">Regístrate aquí</a></p>
+        <div style="margin-top: 18px; padding: 14px; background: rgba(230, 29, 37, 0.15); border-radius: 12px; text-align: center;">
+          <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 10px;">¿Primera vez?</p>
+          <button class="btn" style="background: var(--mundial-blue); color: white; width: 100%; padding: 12px;" onclick="showRegister()">
+            📝 Crear nueva cuenta
+          </button>
+        </div>
       </div>
 
       <div class="auth-form" id="registerForm" style="display: none;">
@@ -1461,13 +1466,31 @@
     // ==================== INIT ====================
     document.addEventListener('DOMContentLoaded', () => {
       updateUI();
-      // Refresh every 30 seconds
-      setInterval(() => {
+      // Auto-refresh every 30 seconds
+      setInterval(async () => {
         if (state.currentUser) {
-          loadPredictionsTab();
+          const resultsRes = await api('GET', '/api/results');
+          if (resultsRes) {
+            state.realResults = resultsRes;
+            loadPredictionsTab();
+            if (document.querySelector('.tab-btn.active')?.dataset.tab === 'leaderboard') {
+              loadLeaderboardTab();
+            }
+            if (document.querySelector('.tab-btn.active')?.dataset.tab === 'comparator') {
+              loadComparator();
+            }
+            // Update user points
+            const scoresRes = await api('GET', '/api/scores');
+            if (scoresRes && scoresRes[state.currentUser]) {
+              document.getElementById('userPoints').textContent = scoresRes[state.currentUser].total + ' pts';
+            }
+          }
         }
       }, 30000);
+      
+      // Show auto-refresh indicator
+      console.log('⚽ Polla Mundial 2026 - Actualización automática cada 30s');
     });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0ac4e66e8a1d03f',t:'MTc4MTMwMzQ5MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0ac62019d369685',t:'MTc4MTMwNDI5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
