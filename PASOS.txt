@@ -1,0 +1,69 @@
+===============================================
+  POLLA MUNDIAL 2026 - GUÍA DE INSTALACIÓN
+===============================================
+
+PROBLEMA: "Failed to fetch" y errores CORS
+CAUSA: Estás abriendo el archivo HTML directamente
+SOLUCIÓN: Necesitas un servidor web
+
+===============================================
+  PASO 1: DESCARGAR ARCHIVOS
+===============================================
+
+Descarga estos 5 archivos a una carpeta:
+
+1. server.js      (13 KB)
+2. index.html     (74 KB)
+3. matches.js     (16 KB)
+4. package.json   (301 bytes)
+5. data.json      (919 bytes)
+
+===============================================
+  PASO 2: ABRIR TERMINAL
+===============================================
+
+1. En esa carpeta, haz clic derecho
+2. Selecciona "Abrir en Terminal" o "PowerShell"
+3. O abre CMD y navega con: cd carpeta
+
+===============================================
+  PASO 3: INSTALAR DEPENDENCIAS
+===============================================
+
+En la terminal escribe:
+
+  npm install
+
+(Esto solo se hace una vez)
+
+===============================================
+  PASO 4: INICIAR SERVIDOR
+===============================================
+
+Escribe:
+
+  npm start
+
+o simplemente:
+
+  node server.js
+
+===============================================
+  PASO 5: ABRIR EN NAVEGADOR
+===============================================
+
+Abre tu navegador y escribe:
+
+  http://localhost:3000
+
+¡Ahora sí funcionará el registro!
+
+===============================================
+  PARA ACTUALIZAR EN GITHUB/RENDER
+===============================================
+
+Si ya tienes la app en Render, solo necesitas
+subir los archivos actualizados a tu repositorio
+de GitHub. Render se actualiza automáticamente.
+
+===============================================
