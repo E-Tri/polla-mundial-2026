@@ -623,6 +623,7 @@
   </nav>
 
   <main class="main-content" id="mainContent">
+    <!-- SOLO AUTH SCREEN AL INICIO -->
     <div class="auth-screen" id="authScreen">
       <div class="auth-logo">
         <div class="logo-icon">🏆</div>
@@ -670,7 +671,9 @@
       </div>
     </div>
 
-    <div class="tab-content active" id="predictionsTab">
+    <!-- CONTENIDO PRINCIPAL (SOLO visible después de login) -->
+    <div id="appContent" style="display: none;">
+      
       <div class="instructions">
         <div class="instructions-title">📋 Sistema de Puntuación</div>
         <div class="instructions-grid">
@@ -694,42 +697,37 @@
       </div>
 
       <div id="predictionsContent"><div class="loading"><div class="loading-spinner"></div><span>Cargando predicciones...</span></div></div>
-    </div>
 
-    <div class="tab-content" id="leaderboardTab">
-      <div class="section-header">
-        <h2 class="section-title">🏆 Tabla de Posiciones</h2>
-        <p class="section-subtitle">Clasificación en tiempo real de todos los participantes</p>
-      </div>
-      <div id="leaderboardContent"><div class="loading"><div class="loading-spinner"></div><span>Cargando tabla...</span></div></div>
-    </div>
+      <div id="leaderboardContent" style="display: none;"><div class="loading"><div class="loading-spinner"></div><span>Cargando tabla...</span></div></div>
 
-    <div class="tab-content" id="comparatorTab">
-      <div class="section-header">
-        <h2 class="section-title">📊 Comparador de Predicciones</h2>
-        <p class="section-subtitle">Ve qué predijo cada amigo para cada partido</p>
+      <div id="comparatorContent" style="display: none;">
+        <div class="section-header">
+          <h2 class="section-title">📊 Comparador de Predicciones</h2>
+          <p class="section-subtitle">Ve qué predijo cada amigo para cada partido</p>
+        </div>
+        <div class="comparador-select">
+          <div class="form-group">
+            <label class="form-label">Selecciona un partido</label>
+            <select class="form-input" id="matchSelector" onchange="loadComparator()">
+              <option value="">-- Selecciona un partido --</option>
+            </select>
+          </div>
+        </div>
+        <div id="comparatorMatches" style="display: none;"></div>
       </div>
-      <div class="comparador-select">
-        <div class="form-group">
-          <label class="form-label">Selecciona un partido</label>
-          <select class="form-input" id="matchSelector" onchange="loadComparator()">
-            <option value="">-- Selecciona un partido --</option>
-          </select>
+
+      <div id="adminContentArea" style="display: none;">
+        <div class="admin-section">
+          <h2 class="admin-title">⚙️ Consola de Administración</h2>
+          <p class="section-subtitle" style="margin-bottom: 18px;">Ingresa los resultados oficiales de la FIFA. Solo se puede ingresar 5 min antes del partido.</p>
+          <div id="adminContent"><div class="loading"><div class="loading-spinner"></div><span>Cargando...</span></div></div>
+        </div>
+        <div class="results-history">
+          <h3 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--text-secondary);">📜 Historial de Resultados</h3>
+          <div id="historyContent"><div class="loading"><div class="loading-spinner"></div><span>Cargando...</span></div></div>
         </div>
       </div>
-      <div id="comparatorContent"><div class="loading"><div class="loading-spinner"></div><span>Selecciona un partido...</span></div></div>
-    </div>
 
-    <div class="tab-content" id="adminTabContent">
-      <div class="admin-section">
-        <h2 class="admin-title">⚙️ Consola de Administración</h2>
-        <p class="section-subtitle" style="margin-bottom: 18px;">Ingresa los resultados oficiales de la FIFA. Solo se puede ingresar 5 min antes del partido.</p>
-        <div id="adminContent"><div class="loading"><div class="loading-spinner"></div><span>Cargando...</span></div></div>
-      </div>
-      <div class="results-history">
-        <h3 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--text-secondary);">📜 Historial de Resultados</h3>
-        <div id="historyContent"><div class="loading"><div class="loading-spinner"></div><span>Cargando...</span></div></div>
-      </div>
     </div>
   </main>
 
@@ -1020,23 +1018,32 @@
     // ==================== UI ====================
     async function updateUI() {
       const authScreen = document.getElementById('authScreen');
+      const appContent = document.getElementById('appContent');
       const navTabs = document.getElementById('navTabs');
       const saveBtn = document.getElementById('saveBtn');
 
+      // Verificar sesión guardada
       const session = localStorage.getItem('polla_session');
       if (session && !state.currentUser) {
-        const { userId } = JSON.parse(session);
-        const loginResult = await api('POST', '/api/login', { name: '', pin: '' });
-        state.currentUser = userId;
+        try {
+          const { userId } = JSON.parse(session);
+          // Cargar datos del usuario
+          const usersRes = await api('GET', '/api/users');
+          if (usersRes && usersRes[userId]) {
+            state.currentUser = userId;
+            state.users = usersRes;
+          }
+        } catch (e) {
+          localStorage.removeItem('polla_session');
+        }
       }
 
       if (state.currentUser) {
+        // MOSTRAR APP - OCULTAR AUTH
         authScreen.style.display = 'none';
+        appContent.style.display = 'block';
         navTabs.style.display = 'block';
         saveBtn.style.display = 'flex';
-
-        const usersRes = await api('GET', '/api/users');
-        if (usersRes) state.users = usersRes;
 
         const user = state.users[state.currentUser];
         if (user) {
@@ -1047,6 +1054,7 @@
             document.getElementById('userPoints').textContent = scoresRes[state.currentUser].total + ' pts';
           }
 
+          // Mostrar botón Admin si es admin
           if (user.isAdmin) {
             state.isAdmin = true;
             document.getElementById('adminTab').style.display = 'flex';
@@ -1054,32 +1062,60 @@
           }
         }
 
+        // Cargar datos
         const predictionsRes = await api('GET', '/api/predictions');
         if (predictionsRes) state.predictions = predictionsRes;
 
         const resultsRes = await api('GET', '/api/results');
         if (resultsRes) state.realResults = resultsRes;
 
-        loadPredictionsTab();
+        // Mostrar tab inicial
+        showAppTab('predictions');
         updatePendingCount();
       } else {
+        // MOSTRAR AUTH - OCULTAR APP
         authScreen.style.display = 'flex';
+        appContent.style.display = 'none';
         navTabs.style.display = 'none';
         saveBtn.style.display = 'none';
+        
+        // Limpiar formulario de login
+        document.getElementById('loginName').value = '';
+        document.getElementById('loginPin').value = '';
       }
     }
 
-    function switchTab(tabId) {
+    function showAppTab(tabId) {
+      // Ocultar todas las secciones de contenido
+      document.getElementById('predictionsContent').style.display = 'none';
+      document.getElementById('leaderboardContent').style.display = 'none';
+      document.getElementById('comparatorContent').style.display = 'none';
+      document.getElementById('adminContentArea').style.display = 'none';
+
+      // Mostrar la sección seleccionada
+      if (tabId === 'predictions') {
+        document.getElementById('predictionsContent').style.display = 'block';
+        loadPredictionsTab();
+      } else if (tabId === 'leaderboard') {
+        document.getElementById('leaderboardContent').style.display = 'block';
+        loadLeaderboardTab();
+      } else if (tabId === 'comparator') {
+        document.getElementById('comparatorContent').style.display = 'block';
+        loadComparatorTab();
+      } else if (tabId === 'admin') {
+        document.getElementById('adminContentArea').style.display = 'block';
+        loadAdminTab();
+      }
+
+      // Actualizar tabs
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabId);
       });
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.toggle('active', content.id === tabId + 'Tab' || content.id === tabId + 'TabContent');
-      });
+    }
 
-      if (tabId === 'leaderboard') loadLeaderboardTab();
-      else if (tabId === 'comparator') loadComparatorTab();
-      else if (tabId === 'admin') loadAdminTab();
+    // Alias para mantener compatibilidad
+    function switchTab(tabId) {
+      showAppTab(tabId);
     }
 
     // ==================== PREDICTIONS ====================
@@ -1099,6 +1135,7 @@
     function loadPredictionsTab() {
       const content = document.getElementById('predictionsContent');
       content.innerHTML = renderGroupPhase();
+      content.style.display = 'block';
     }
 
     function renderGroupPhase() {
@@ -1267,7 +1304,7 @@
               <div class="leaderboard-avatar">${user.name.charAt(0).toUpperCase()}</div>
               <div class="leaderboard-info">
                 <div class="leaderboard-name">${user.name}${index === 0 ? '<span class="crown-icon">👑</span>' : ''}</div>
-                <div class="leaderboard-stats">${user.exactMatches || 0} exactos · ${user.correctWinners || 0} тенденция</div>
+                <div class="leaderboard-stats">${user.exactMatches || 0} exactos · ${user.correctWinners || 0} ganadores</div>
               </div>
               <div class="leaderboard-score">${user.total || 0}<div class="label">pts</div></div>
             </div>
@@ -1279,7 +1316,8 @@
     // ==================== COMPARATOR ====================
     async function loadComparatorTab() {
       const selector = document.getElementById('matchSelector');
-      const content = document.getElementById('comparatorContent');
+      const matchesContainer = document.getElementById('comparatorMatches');
+      const comparatorContent = document.getElementById('comparatorContent');
 
       const groupMatches = MATCHES.filter(m => m.phase === 'groups');
       selector.innerHTML = '<option value="">-- Selecciona un partido --</option>' +
@@ -1289,14 +1327,17 @@
           return `<option value="${match.id}">${team1.name} vs ${team2.name}</option>`;
         }).join('');
 
-      content.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:40px;">Selecciona un partido</p>';
+      matchesContainer.style.display = 'none';
     }
 
     async function loadComparator() {
       const matchId = document.getElementById('matchSelector').value;
-      const content = document.getElementById('comparatorContent');
+      const matchesContainer = document.getElementById('comparatorMatches');
 
-      if (!matchId) { content.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:40px;">Selecciona un partido</p>'; return; }
+      if (!matchId) { 
+        matchesContainer.style.display = 'none';
+        return; 
+      }
 
       const match = MATCHES.find(m => m.id === matchId);
       const usersRes = await api('GET', '/api/users');
@@ -1338,11 +1379,19 @@
         `;
       });
 
-      content.innerHTML = html;
+      matchesContainer.innerHTML = html;
+      matchesContainer.style.display = 'block';
     }
 
     // ==================== ADMIN ====================
     async function loadAdminTab() {
+      // Verificar que sea admin
+      if (!state.isAdmin) {
+        showToast('Solo administradores pueden acceder', 'error');
+        showAppTab('predictions');
+        return;
+      }
+
       const content = document.getElementById('adminContent');
       const historyContent = document.getElementById('historyContent');
 
@@ -1385,12 +1434,12 @@
                   </div>
                   <div style="display:flex;align-items:center;gap:12px;">
                     <div class="admin-inputs">
-                      <input type="number" class="admin-input" id="score1-${match.id}" placeholder="0" min="0" max="15" ${status === 'pending' ? 'disabled' : ''}>
+                      <input type="number" class="admin-input" id="score1-${match.id}" placeholder="0" min="0" max="15">
                       <span style="color:var(--text-muted);">-</span>
-                      <input type="number" class="admin-input" id="score2-${match.id}" placeholder="0" min="0" max="15" ${status === 'pending' ? 'disabled' : ''}>
+                      <input type="number" class="admin-input" id="score2-${match.id}" placeholder="0" min="0" max="15">
                     </div>
-                    <button class="btn btn-success" onclick="submitResult('${match.id}')" style="padding:10px 18px;font-size:0.85rem;" ${status === 'pending' ? 'disabled' : ''}>
-                      ${status === 'expired' ? 'Ingresar resultado' : 'Confirmar'}
+                    <button class="btn btn-success" onclick="submitResult('${match.id}')" style="padding:10px 18px;font-size:0.85rem;">
+                      Confirmar
                     </button>
                   </div>
                 </div>
@@ -1492,5 +1541,5 @@
       console.log('⚽ Polla Mundial 2026 - Actualización automática cada 30s');
     });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0ac62019d369685',t:'MTc4MTMwNDI5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
