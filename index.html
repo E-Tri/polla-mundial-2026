@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Polla Mundial 2026</title>
+  <title>Polla Mundial 2026 - FIFA World Cup</title>
   <style>
     :root {
       --mundial-red: #E61D25;
@@ -23,11 +23,11 @@
     .points { color: var(--accent-gold); font-weight: bold; }
     .admin-tag { background: var(--mundial-green); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; }
     
-    .nav { background: var(--mundial-blue); display: flex; overflow-x: auto; }
-    .nav button { padding: 12px 16px; background: transparent; border: none; color: rgba(255,255,255,0.7); cursor: pointer; white-space: nowrap; font-size: 0.9rem; }
-    .nav button.active { color: white; font-weight: bold; border-bottom: 3px solid var(--mundial-red); }
+    .nav { background: var(--mundial-blue); display: flex; overflow-x: auto; padding: 8px 0; }
+    .nav button { padding: 10px 16px; background: transparent; border: none; color: rgba(255,255,255,0.7); cursor: pointer; white-space: nowrap; font-size: 0.85rem; font-weight: 500; }
+    .nav button.active { color: white; font-weight: bold; background: rgba(255,255,255,0.1); border-radius: 6px; }
     
-    .main { padding: 16px; max-width: 900px; margin: 0 auto; }
+    .main { padding: 16px; max-width: 1100px; margin: 0 auto; }
     
     .auth-screen { min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 20px; }
     .logo-big { font-size: 4rem; }
@@ -44,6 +44,7 @@
     .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
     .btn-primary { background: var(--mundial-red); color: white; }
     .btn-success { background: var(--mundial-green); color: white; }
+    .btn-small { width: auto; padding: 8px 16px; font-size: 0.85rem; }
     
     .switch { text-align: center; margin-top: 14px; font-size: 0.9rem; color: #94a3b8; }
     .switch a { color: var(--mundial-red); cursor: pointer; font-weight: 500; }
@@ -59,29 +60,60 @@
     .tabs button.active { background: var(--mundial-red); border-color: var(--mundial-red); color: white; }
     
     .group-badge { background: var(--mundial-red); padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; }
+    .phase-badge { background: linear-gradient(135deg, var(--accent-gold), #FFA500); color: #000; padding: 6px 16px; border-radius: 8px; font-weight: bold; font-size: 1rem; }
     
-    .match { background: var(--bg-card); border: 2px solid #333; border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+    .match { background: var(--bg-card); border: 2px solid #333; border-radius: 12px; padding: 14px; margin-bottom: 8px; transition: all 0.3s; }
     .match.completed { border-color: rgba(60, 172, 59, 0.4); }
-    .match-info { font-size: 0.7rem; color: #64748b; margin-bottom: 8px; }
+    .match.live { border-color: var(--mundial-red); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(230,29,37,0.4); } 50% { box-shadow: 0 0 0 8px rgba(230,29,37,0); } }
+    .match-info { font-size: 0.7rem; color: #64748b; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .live-tag { background: var(--mundial-red); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
     
     .match-teams { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .team { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+    .team { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
     .team.right { flex-direction: row-reverse; text-align: right; }
-    .flag { font-size: 1.4rem; }
-    .team-name { font-size: 0.8rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .flag { font-size: 1.8rem; }
+    .team-name { font-size: 0.85rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
     .score-inputs { display: flex; align-items: center; gap: 6px; }
-    .score-input { width: 40px; height: 40px; text-align: center; font-size: 1.2rem; font-weight: bold; background: var(--bg-secondary); border: 2px solid #333; border-radius: 6px; color: white; }
+    .score-input { width: 44px; height: 44px; text-align: center; font-size: 1.2rem; font-weight: bold; background: var(--bg-secondary); border: 2px solid #333; border-radius: 6px; color: white; }
     .score-input:disabled { opacity: 0.5; }
     .vs { color: #64748b; font-weight: bold; font-size: 0.8rem; }
+    .final-score { font-size: 1.5rem; font-weight: bold; min-width: 60px; text-align: center; }
+    .final-score.win { color: var(--mundial-green); }
+    .final-score.lose { color: #ef4444; }
     
     .status { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; margin-top: 8px; display: inline-block; }
     .status.completed { background: rgba(60, 172, 59, 0.2); color: var(--mundial-green); }
+    .status.scheduled { background: rgba(100, 116, 139, 0.2); color: #64748b; }
+    
+    .standing-table { width: 100%; border-collapse: collapse; margin-top: 16px; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
+    .standing-table th { background: var(--mundial-blue); padding: 10px 8px; font-size: 0.75rem; text-align: left; }
+    .standing-table td { padding: 10px 8px; border-bottom: 1px solid #333; font-size: 0.85rem; }
+    .standing-table tr:nth-child(1) { background: rgba(60, 172, 59, 0.15); }
+    .standing-table tr:nth-child(2) { background: rgba(59, 130, 246, 0.1); }
+    .standing-table .pos { font-weight: bold; width: 30px; }
+    .standing-table .team-cell { display: flex; align-items: center; gap: 8px; }
+    .standing-table .qualify { color: var(--mundial-green); font-weight: bold; }
+    .standing-table .points-col { font-weight: bold; color: var(--accent-gold); }
+    
+    .bracket-container { display: flex; overflow-x: auto; padding: 20px 0; gap: 40px; }
+    .bracket-round { display: flex; flex-direction: column; gap: 10px; }
+    .bracket-round-title { font-size: 0.9rem; font-weight: bold; color: var(--accent-gold); margin-bottom: 10px; text-align: center; }
+    .bracket-match { background: var(--bg-card); border: 2px solid #333; border-radius: 8px; padding: 10px; min-width: 180px; }
+    .bracket-team { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 0.85rem; }
+    .bracket-team.winner { color: var(--mundial-green); font-weight: bold; }
+    .bracket-score { margin-left: auto; font-weight: bold; }
+    .bracket-line { width: 2px; background: #333; margin: 0 20px; }
     
     .leaderboard-item { display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 2px solid #333; border-radius: 10px; padding: 12px; margin-bottom: 8px; }
     .leaderboard-item.top1 { background: linear-gradient(rgba(255, 215, 0, 0.1), transparent); border-color: var(--accent-gold); }
+    .leaderboard-item.top2 { background: linear-gradient(rgba(192, 192, 192, 0.1), transparent); border-color: #C0C0C0; }
+    .leaderboard-item.top3 { background: linear-gradient(rgba(205, 127, 50, 0.1), transparent); border-color: #CD7F32; }
     .rank { font-size: 1.2rem; font-weight: bold; width: 30px; text-align: center; }
     .rank-1 { color: #FFD700; }
+    .rank-2 { color: #C0C0C0; }
+    .rank-3 { color: #CD7F32; }
     .avatar { width: 40px; height: 40px; background: linear-gradient(var(--mundial-red), var(--mundial-blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
     .name { flex: 1; font-weight: 600; }
     .score { font-size: 1.4rem; font-weight: bold; color: var(--mundial-red); text-align: right; }
@@ -103,9 +135,15 @@
     
     .hidden { display: none !important; }
     
-    @media (max-width: 600px) {
+    .knockout-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+    .knockout-round { background: var(--bg-card); border-radius: 12px; padding: 16px; }
+    .knockout-round h4 { text-align: center; color: var(--accent-gold); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #333; }
+    
+    @media (max-width: 768px) {
+      .knockout-grid { grid-template-columns: 1fr; }
       .team-name { font-size: 0.7rem; }
-      .score-input { width: 36px; height: 36px; font-size: 1rem; }
+      .score-input { width: 38px; height: 38px; font-size: 1rem; }
+      .flag { font-size: 1.4rem; }
     }
   </style>
 </head>
@@ -122,7 +160,9 @@
 
   <nav class="nav" id="nav" style="display: none;">
     <button class="active" data-tab="predictions" onclick="showTab('predictions')">📋 Mi Polla <span id="pendingBadge" style="background: var(--mundial-red); padding: 2px 6px; border-radius: 10px; font-size: 0.7rem;">0</span></button>
-    <button data-tab="leaderboard" onclick="showTab('leaderboard')">🏆 Tabla</button>
+    <button data-tab="standings" onclick="showTab('standings')">📊 Grupos</button>
+    <button data-tab="knockout" onclick="showTab('knockout')">🏆 Eliminatoria</button>
+    <button data-tab="leaderboard" onclick="showTab('leaderboard')">🏅 Tabla</button>
     <button data-tab="admin" id="adminBtn" onclick="showTab('admin')" class="hidden">⚙️ Admin</button>
   </nav>
 
@@ -183,8 +223,35 @@
       <div id="matchesContent"></div>
     </div>
 
+    <div id="standingsTab" class="hidden">
+      <h2 style="margin-bottom: 16px;">📊 Tabla de Grupos - Mundial 2026</h2>
+      <div id="standingsContent"></div>
+    </div>
+
+    <div id="knockoutTab" class="hidden">
+      <h2 style="margin-bottom: 16px;">🏆 Fases Eliminatorias - Mundial 2026</h2>
+      <div class="knockout-grid">
+        <div class="knockout-round">
+          <h4>🔟 Octavos de Final</h4>
+          <div id="octavosContent"></div>
+        </div>
+        <div class="knockout-round">
+          <h4>🔔 Cuartos de Final</h4>
+          <div id="cuartosContent"></div>
+        </div>
+        <div class="knockout-round">
+          <h4>🏅 Semifinales</h4>
+          <div id="semifinalContent"></div>
+        </div>
+        <div class="knockout-round">
+          <h4>🥇 GRAN FINAL</h4>
+          <div id="finalContent"></div>
+        </div>
+      </div>
+    </div>
+
     <div id="leaderboardTab" class="hidden">
-      <h2 style="margin-bottom: 16px;">🏆 Tabla de Posiciones</h2>
+      <h2 style="margin-bottom: 16px;">🏅 Tabla de Posiciones</h2>
       <div id="statsBar" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;"></div>
       <div id="leaderboardContent"></div>
     </div>
@@ -226,11 +293,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ============ DATA ============
+// ============ BANDERAS ============
 const FLAGS = {
   mx: '🇲🇽', kr: '🇰🇷', cz: '🇨🇿', za: '🇿🇦',
   ch: '🇨🇭', ca: '🇨🇦', qa: '🇶🇦', ba: '🇧🇦',
-  br: '🇧🇷', ma: '🇲🇦', sc: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', ht: '🇭🇹',
+  br: '🇧🇷', ma: '🇲🇦', sc: '🏴󠁧󠁢󠁳󠁣󠁿', ht: '🇭🇹',
   us: '🇺🇸', tr: '🇹🇷', au: '🇦🇺', py: '🇵🇾',
   de: '🇩🇪', ec: '🇪🇨', ci: '🇨🇮', cw: '🇨🇼',
   nl: '🇳🇱', jp: '🇯🇵', se: '🇸🇪', tn: '🇹🇳',
@@ -239,20 +306,22 @@ const FLAGS = {
   fr: '🇫🇷', sn: '🇸🇳', no: '🇳🇴', iq: '🇮🇶',
   ar: '🇦🇷', dz: '🇩🇿', at: '🇦🇹', jo: '🇯🇴',
   pt: '🇵🇹', co: '🇨🇴', jm: '🇯🇲', uz: '🇺🇿',
-  gb: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', hr: '🇭🇷', pa: '🇵🇦', gh: '🇬🇭'
+  gb: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', hr: '🇭🇷', pa: '🇵🇦', gh: '🇬🇭',
+  ng: '🇳🇬', mw: '🇲🇼', za2: '🇿🇦', ke: '🇰🇪'
 };
 
+// ============ EQUIPOS ============
 const TEAMS = {
   A1: { name: "Mexico", flag: "mx" }, A2: { name: "South Korea", flag: "kr" },
-  A3: { name: "Czech Republic", flag: "cz" }, A4: { name: "South Africa", flag: "za" },
+  A3: { name: "Czechia", flag: "cz" }, A4: { name: "South Africa", flag: "za" },
   B1: { name: "Switzerland", flag: "ch" }, B2: { name: "Canada", flag: "ca" },
   B3: { name: "Qatar", flag: "qa" }, B4: { name: "Bosnia & Herz.", flag: "ba" },
   C1: { name: "Brazil", flag: "br" }, C2: { name: "Morocco", flag: "ma" },
   C3: { name: "Scotland", flag: "sc" }, C4: { name: "Haiti", flag: "ht" },
-  D1: { name: "United States", flag: "us" }, D2: { name: "Turkey", flag: "tr" },
+  D1: { name: "USA", flag: "us" }, D2: { name: "Turkey", flag: "tr" },
   D3: { name: "Australia", flag: "au" }, D4: { name: "Paraguay", flag: "py" },
   E1: { name: "Germany", flag: "de" }, E2: { name: "Ecuador", flag: "ec" },
-  E3: { name: "Ivory Coast", flag: "ci" }, E4: { name: "Curacao", flag: "cw" },
+  E3: { name: "Ivory Coast", flag: "ci" }, E4: { name: "Curaçao", flag: "cw" },
   F1: { name: "Netherlands", flag: "nl" }, F2: { name: "Japan", flag: "jp" },
   F3: { name: "Sweden", flag: "se" }, F4: { name: "Tunisia", flag: "tn" },
   G1: { name: "Belgium", flag: "be" }, G2: { name: "Iran", flag: "ir" },
@@ -269,84 +338,218 @@ const TEAMS = {
   L3: { name: "Panama", flag: "pa" }, L4: { name: "Ghana", flag: "gh" }
 };
 
-const MATCHES = [
-  { id: 'G-A-1', team1: 'A1', team2: 'A4', date: '2026-06-11', venue: 'Mexico City', group: 'A' },
-  { id: 'G-A-2', team1: 'A2', team2: 'A3', date: '2026-06-11', venue: 'Guadalajara', group: 'A' },
-  { id: 'G-A-3', team1: 'A1', team2: 'A2', date: '2026-06-15', venue: 'Mexico City', group: 'A' },
-  { id: 'G-A-4', team1: 'A3', team2: 'A4', date: '2026-06-15', venue: 'Monterrey', group: 'A' },
-  { id: 'G-A-5', team1: 'A4', team2: 'A2', date: '2026-06-19', venue: 'Guadalajara', group: 'A' },
-  { id: 'G-A-6', team1: 'A3', team2: 'A1', date: '2026-06-19', venue: 'Mexico City', group: 'A' },
-  { id: 'G-B-1', team1: 'B1', team2: 'B3', date: '2026-06-11', venue: 'Toronto', group: 'B' },
-  { id: 'G-B-2', team1: 'B2', team2: 'B4', date: '2026-06-11', venue: 'Vancouver', group: 'B' },
-  { id: 'G-B-3', team1: 'B1', team2: 'B2', date: '2026-06-15', venue: 'Toronto', group: 'B' },
-  { id: 'G-B-4', team1: 'B4', team2: 'B3', date: '2026-06-15', venue: 'Seattle', group: 'B' },
-  { id: 'G-B-5', team1: 'B3', team2: 'B2', date: '2026-06-19', venue: 'Seattle', group: 'B' },
-  { id: 'G-B-6', team1: 'B4', team2: 'B1', date: '2026-06-19', venue: 'Toronto', group: 'B' },
-  { id: 'G-C-1', team1: 'C1', team2: 'C4', date: '2026-06-12', venue: 'Inglewood', group: 'C' },
-  { id: 'G-C-2', team1: 'C2', team2: 'C3', date: '2026-06-12', venue: 'Kansas City', group: 'C' },
-  { id: 'G-C-3', team1: 'C1', team2: 'C2', date: '2026-06-16', venue: 'Inglewood', group: 'C' },
-  { id: 'G-C-4', team1: 'C3', team2: 'C4', date: '2026-06-16', venue: 'Miami', group: 'C' },
-  { id: 'G-C-5', team1: 'C4', team2: 'C2', date: '2026-06-20', venue: 'Miami', group: 'C' },
-  { id: 'G-C-6', team1: 'C3', team2: 'C1', date: '2026-06-20', venue: 'Kansas City', group: 'C' },
-  { id: 'G-D-1', team1: 'D1', team2: 'D4', date: '2026-06-12', venue: 'Inglewood', group: 'D' },
-  { id: 'G-D-2', team1: 'D2', team2: 'D3', date: '2026-06-12', venue: 'Philadelphia', group: 'D' },
-  { id: 'G-D-3', team1: 'D1', team2: 'D2', date: '2026-06-19', venue: 'Inglewood', group: 'D' },
-  { id: 'G-D-4', team1: 'D3', team2: 'D4', date: '2026-06-19', venue: 'Seattle', group: 'D' },
-  { id: 'G-D-5', team1: 'D4', team2: 'D3', date: '2026-06-25', venue: 'Seattle', group: 'D' },
-  { id: 'G-D-6', team1: 'D2', team2: 'D1', date: '2026-06-25', venue: 'Inglewood', group: 'D' },
-  { id: 'G-E-1', team1: 'E1', team2: 'E4', date: '2026-06-13', venue: 'Dallas', group: 'E' },
-  { id: 'G-E-2', team1: 'E2', team2: 'E3', date: '2026-06-13', venue: 'Houston', group: 'E' },
-  { id: 'G-E-3', team1: 'E1', team2: 'E2', date: '2026-06-17', venue: 'Dallas', group: 'E' },
-  { id: 'G-E-4', team1: 'E3', team2: 'E4', date: '2026-06-17', venue: 'San Antonio', group: 'E' },
-  { id: 'G-E-5', team1: 'E4', team2: 'E2', date: '2026-06-21', venue: 'San Antonio', group: 'E' },
-  { id: 'G-E-6', team1: 'E3', team2: 'E1', date: '2026-06-21', venue: 'Houston', group: 'E' },
-  { id: 'G-F-1', team1: 'F1', team2: 'F4', date: '2026-06-13', venue: 'New Jersey', group: 'F' },
-  { id: 'G-F-2', team1: 'F2', team2: 'F3', date: '2026-06-13', venue: 'Boston', group: 'F' },
-  { id: 'G-F-3', team1: 'F1', team2: 'F2', date: '2026-06-17', venue: 'New Jersey', group: 'F' },
-  { id: 'G-F-4', team1: 'F3', team2: 'F4', date: '2026-06-17', venue: 'Miami', group: 'F' },
-  { id: 'G-F-5', team1: 'F4', team2: 'F2', date: '2026-06-21', venue: 'Miami', group: 'F' },
-  { id: 'G-F-6', team1: 'F3', team2: 'F1', date: '2026-06-21', venue: 'Boston', group: 'F' },
-  { id: 'G-G-1', team1: 'G1', team2: 'G4', date: '2026-06-14', venue: 'Kansas City', group: 'G' },
-  { id: 'G-G-2', team1: 'G2', team2: 'G3', date: '2026-06-14', venue: 'Inglewood', group: 'G' },
-  { id: 'G-G-3', team1: 'G1', team2: 'G2', date: '2026-06-18', venue: 'Kansas City', group: 'G' },
-  { id: 'G-G-4', team1: 'G3', team2: 'G4', date: '2026-06-18', venue: 'Philadelphia', group: 'G' },
-  { id: 'G-G-5', team1: 'G4', team2: 'G2', date: '2026-06-22', venue: 'Philadelphia', group: 'G' },
-  { id: 'G-G-6', team1: 'G3', team2: 'G1', date: '2026-06-22', venue: 'Inglewood', group: 'G' },
-  { id: 'G-H-1', team1: 'H1', team2: 'H4', date: '2026-06-14', venue: 'Houston', group: 'H' },
-  { id: 'G-H-2', team1: 'H2', team2: 'H3', date: '2026-06-14', venue: 'Dallas', group: 'H' },
-  { id: 'G-H-3', team1: 'H1', team2: 'H2', date: '2026-06-18', venue: 'Houston', group: 'H' },
-  { id: 'G-H-4', team1: 'H3', team2: 'H4', date: '2026-06-18', venue: 'San Antonio', group: 'H' },
-  { id: 'G-H-5', team1: 'H4', team2: 'H2', date: '2026-06-22', venue: 'San Antonio', group: 'H' },
-  { id: 'G-H-6', team1: 'H3', team2: 'H1', date: '2026-06-22', venue: 'Dallas', group: 'H' },
-  { id: 'G-I-1', team1: 'I1', team2: 'I4', date: '2026-06-15', venue: 'Boston', group: 'I' },
-  { id: 'G-I-2', team1: 'I2', team2: 'I3', date: '2026-06-15', venue: 'New Jersey', group: 'I' },
-  { id: 'G-I-3', team1: 'I1', team2: 'I2', date: '2026-06-19', venue: 'Boston', group: 'I' },
-  { id: 'G-I-4', team1: 'I3', team2: 'I4', date: '2026-06-19', venue: 'Vancouver', group: 'I' },
-  { id: 'G-I-5', team1: 'I4', team2: 'I3', date: '2026-06-25', venue: 'Vancouver', group: 'I' },
-  { id: 'G-I-6', team1: 'I2', team2: 'I1', date: '2026-06-25', venue: 'New Jersey', group: 'I' },
-  { id: 'G-J-1', team1: 'J1', team2: 'J4', date: '2026-06-16', venue: 'Miami', group: 'J' },
-  { id: 'G-J-2', team1: 'J2', team2: 'J3', date: '2026-06-16', venue: 'Philadelphia', group: 'J' },
-  { id: 'G-J-3', team1: 'J1', team2: 'J2', date: '2026-06-20', venue: 'Miami', group: 'J' },
-  { id: 'G-J-4', team1: 'J3', team2: 'J4', date: '2026-06-20', venue: 'Seattle', group: 'J' },
-  { id: 'G-J-5', team1: 'J4', team2: 'J3', date: '2026-06-24', venue: 'Seattle', group: 'J' },
-  { id: 'G-J-6', team1: 'J2', team2: 'J1', date: '2026-06-24', venue: 'Philadelphia', group: 'J' },
-  { id: 'G-K-1', team1: 'K1', team2: 'K4', date: '2026-06-17', venue: 'New Jersey', group: 'K' },
-  { id: 'G-K-2', team1: 'K2', team2: 'K3', date: '2026-06-17', venue: 'Inglewood', group: 'K' },
-  { id: 'G-K-3', team1: 'K1', team2: 'K2', date: '2026-06-21', venue: 'New Jersey', group: 'K' },
-  { id: 'G-K-4', team1: 'K3', team2: 'K4', date: '2026-06-21', venue: 'Toronto', group: 'K' },
-  { id: 'G-K-5', team1: 'K4', team2: 'K3', date: '2026-06-25', venue: 'Toronto', group: 'K' },
-  { id: 'G-K-6', team1: 'K2', team2: 'K1', date: '2026-06-25', venue: 'Inglewood', group: 'K' },
-  { id: 'G-L-1', team1: 'L1', team2: 'L4', date: '2026-06-17', venue: 'Miami', group: 'L' },
-  { id: 'G-L-2', team1: 'L2', team2: 'L3', date: '2026-06-17', venue: 'Houston', group: 'L' },
-  { id: 'G-L-3', team1: 'L1', team2: 'L2', date: '2026-06-21', venue: 'Miami', group: 'L' },
-  { id: 'G-L-4', team1: 'L3', team2: 'L4', date: '2026-06-21', venue: 'San Antonio', group: 'L' },
-  { id: 'G-L-5', team1: 'L4', team2: 'L2', date: '2026-06-26', venue: 'San Antonio', group: 'L' },
-  { id: 'G-L-6', team1: 'L3', team2: 'L1', date: '2026-06-26', venue: 'Houston', group: 'L' }
+// ============ PARTIDOS DE GRUPO ============
+const GROUP_MATCHES = [
+  // Grupo A
+  { id: 'G-A-1', team1: 'A1', team2: 'A4', date: '2026-06-11', venue: 'Mexico City', group: 'A', time: '13:00' },
+  { id: 'G-A-2', team1: 'A2', team2: 'A3', date: '2026-06-11', venue: 'Guadalajara', group: 'A', time: '19:00' },
+  { id: 'G-A-3', team1: 'A1', team2: 'A2', date: '2026-06-15', venue: 'Mexico City', group: 'A', time: '16:00' },
+  { id: 'G-A-4', team1: 'A3', team2: 'A4', date: '2026-06-15', venue: 'Monterrey', group: 'A', time: '13:00' },
+  { id: 'G-A-5', team1: 'A4', team2: 'A2', date: '2026-06-19', venue: 'Guadalajara', group: 'A', time: '19:00' },
+  { id: 'G-A-6', team1: 'A1', team2: 'A3', date: '2026-06-19', venue: 'Mexico City', group: 'A', time: '16:00' },
+  // Grupo B
+  { id: 'G-B-1', team1: 'B1', team2: 'B3', date: '2026-06-11', venue: 'Toronto', group: 'B', time: '16:00' },
+  { id: 'G-B-2', team1: 'B2', team2: 'B4', date: '2026-06-11', venue: 'Vancouver', group: 'B', time: '19:00' },
+  { id: 'G-B-3', team1: 'B1', team2: 'B2', date: '2026-06-15', venue: 'Toronto', group: 'B', time: '13:00' },
+  { id: 'G-B-4', team1: 'B4', team2: 'B3', date: '2026-06-15', venue: 'Seattle', group: 'B', time: '16:00' },
+  { id: 'G-B-5', team1: 'B3', team2: 'B2', date: '2026-06-19', venue: 'Seattle', group: 'B', time: '13:00' },
+  { id: 'G-B-6', team1: 'B4', team2: 'B1', date: '2026-06-19', venue: 'Toronto', group: 'B', time: '19:00' },
+  // Grupo C
+  { id: 'G-C-1', team1: 'C1', team2: 'C4', date: '2026-06-12', venue: 'Inglewood', group: 'C', time: '13:00' },
+  { id: 'G-C-2', team1: 'C2', team2: 'C3', date: '2026-06-12', venue: 'Kansas City', group: 'C', time: '19:00' },
+  { id: 'G-C-3', team1: 'C1', team2: 'C2', date: '2026-06-16', venue: 'Inglewood', group: 'C', time: '16:00' },
+  { id: 'G-C-4', team1: 'C3', team2: 'C4', date: '2026-06-16', venue: 'Miami', group: 'C', time: '13:00' },
+  { id: 'G-C-5', team1: 'C4', team2: 'C2', date: '2026-06-20', venue: 'Miami', group: 'C', time: '16:00' },
+  { id: 'G-C-6', team1: 'C1', team2: 'C3', date: '2026-06-20', venue: 'Kansas City', group: 'C', time: '19:00' },
+  // Grupo D
+  { id: 'G-D-1', team1: 'D1', team2: 'D4', date: '2026-06-12', venue: 'Inglewood', group: 'D', time: '19:00' },
+  { id: 'G-D-2', team1: 'D2', team2: 'D3', date: '2026-06-12', venue: 'Philadelphia', group: 'D', time: '13:00' },
+  { id: 'G-D-3', team1: 'D1', team2: 'D3', date: '2026-06-16', venue: 'Seattle', group: 'D', time: '19:00' },
+  { id: 'G-D-4', team1: 'D2', team2: 'D4', date: '2026-06-16', venue: 'Inglewood', group: 'D', time: '13:00' },
+  { id: 'G-D-5', team1: 'D4', team2: 'D2', date: '2026-06-20', venue: 'Seattle', group: 'D', time: '19:00' },
+  { id: 'G-D-6', team1: 'D3', team2: 'D1', date: '2026-06-20', venue: 'Philadelphia', group: 'D', time: '16:00' },
+  // Grupo E
+  { id: 'G-E-1', team1: 'E1', team2: 'E4', date: '2026-06-13', venue: 'Houston', group: 'E', time: '13:00' },
+  { id: 'G-E-2', team1: 'E2', team2: 'E3', date: '2026-06-13', venue: 'Philadelphia', group: 'E', time: '19:00' },
+  { id: 'G-E-3', team1: 'E1', team2: 'E3', date: '2026-06-17', venue: 'Dallas', group: 'E', time: '16:00' },
+  { id: 'G-E-4', team1: 'E2', team2: 'E4', date: '2026-06-17', venue: 'Houston', group: 'E', time: '13:00' },
+  { id: 'G-E-5', team1: 'E4', team2: 'E2', date: '2026-06-21', venue: 'Dallas', group: 'E', time: '19:00' },
+  { id: 'G-E-6', team1: 'E3', team2: 'E1', date: '2026-06-21', venue: 'Houston', group: 'E', time: '16:00' },
+  // Grupo F
+  { id: 'G-F-1', team1: 'F1', team2: 'F4', date: '2026-06-13', venue: 'Arlington', group: 'F', time: '16:00' },
+  { id: 'G-F-2', team1: 'F2', team2: 'F3', date: '2026-06-13', venue: 'Boston', group: 'F', time: '19:00' },
+  { id: 'G-F-3', team1: 'F1', team2: 'F3', date: '2026-06-17', venue: 'New Jersey', group: 'F', time: '13:00' },
+  { id: 'G-F-4', team1: 'F2', team2: 'F4', date: '2026-06-17', venue: 'Dallas', group: 'F', time: '16:00' },
+  { id: 'G-F-5', team1: 'F4', team2: 'F2', date: '2026-06-21', venue: 'Arlington', group: 'F', time: '19:00' },
+  { id: 'G-F-6', team1: 'F3', team2: 'F1', date: '2026-06-21', venue: 'Boston', group: 'F', time: '16:00' },
+  // Grupo G
+  { id: 'G-G-1', team1: 'G1', team2: 'G4', date: '2026-06-14', venue: 'Seattle', group: 'G', time: '13:00' },
+  { id: 'G-G-2', team1: 'G2', team2: 'G3', date: '2026-06-14', venue: 'Inglewood', group: 'G', time: '19:00' },
+  { id: 'G-G-3', team1: 'G1', team2: 'G3', date: '2026-06-18', venue: 'Seattle', group: 'G', time: '16:00' },
+  { id: 'G-G-4', team1: 'G2', team2: 'G4', date: '2026-06-18', venue: 'Inglewood', group: 'G', time: '13:00' },
+  { id: 'G-G-5', team1: 'G4', team2: 'G2', date: '2026-06-22', venue: 'Seattle', group: 'G', time: '19:00' },
+  { id: 'G-G-6', team1: 'G3', team2: 'G1', date: '2026-06-22', venue: 'Kansas City', group: 'G', time: '16:00' },
+  // Grupo H
+  { id: 'G-H-1', team1: 'H1', team2: 'H4', date: '2026-06-14', venue: 'Atlanta', group: 'H', time: '16:00' },
+  { id: 'G-H-2', team1: 'H2', team2: 'H3', date: '2026-06-14', venue: 'Miami', group: 'H', time: '19:00' },
+  { id: 'G-H-3', team1: 'H1', team2: 'H3', date: '2026-06-18', venue: 'Atlanta', group: 'H', time: '13:00' },
+  { id: 'G-H-4', team1: 'H2', team2: 'H4', date: '2026-06-18', venue: 'Dallas', group: 'H', time: '16:00' },
+  { id: 'G-H-5', team1: 'H4', team2: 'H2', date: '2026-06-22', venue: 'San Antonio', group: 'H', time: '19:00' },
+  { id: 'G-H-6', team1: 'H3', team2: 'H1', date: '2026-06-22', venue: 'Miami', group: 'H', time: '16:00' },
+  // Grupo I
+  { id: 'G-I-1', team1: 'I1', team2: 'I4', date: '2026-06-15', venue: 'New Jersey', group: 'I', time: '19:00' },
+  { id: 'G-I-2', team1: 'I2', team2: 'I3', date: '2026-06-15', venue: 'Boston', group: 'I', time: '16:00' },
+  { id: 'G-I-3', team1: 'I1', team2: 'I3', date: '2026-06-19', venue: 'New Jersey', group: 'I', time: '13:00' },
+  { id: 'G-I-4', team1: 'I2', team2: 'I4', date: '2026-06-19', venue: 'Boston', group: 'I', time: '16:00' },
+  { id: 'G-I-5', team1: 'I4', team2: 'I2', date: '2026-06-23', venue: 'New Jersey', group: 'I', time: '19:00' },
+  { id: 'G-I-6', team1: 'I3', team2: 'I1', date: '2026-06-23', venue: 'Boston', group: 'I', time: '16:00' },
+  // Grupo J
+  { id: 'G-J-1', team1: 'J1', team2: 'J4', date: '2026-06-15', venue: 'Kansas City', group: 'J', time: '13:00' },
+  { id: 'G-J-2', team1: 'J2', team2: 'J3', date: '2026-06-15', venue: 'Philadelphia', group: 'J', time: '19:00' },
+  { id: 'G-J-3', team1: 'J1', team2: 'J3', date: '2026-06-19', venue: 'Kansas City', group: 'J', time: '16:00' },
+  { id: 'G-J-4', team1: 'J2', team2: 'J4', date: '2026-06-19', venue: 'Philadelphia', group: 'J', time: '13:00' },
+  { id: 'G-J-5', team1: 'J4', team2: 'J2', date: '2026-06-23', venue: 'Kansas City', group: 'J', time: '19:00' },
+  { id: 'G-J-6', team1: 'J3', team2: 'J1', date: '2026-06-23', venue: 'Philadelphia', group: 'J', time: '16:00' },
+  // Grupo K
+  { id: 'G-K-1', team1: 'K1', team2: 'K4', date: '2026-06-16', venue: 'New Jersey', group: 'K', time: '16:00' },
+  { id: 'G-K-2', team1: 'K2', team2: 'K3', date: '2026-06-16', venue: 'Inglewood', group: 'K', time: '19:00' },
+  { id: 'G-K-3', team1: 'K1', team2: 'K3', date: '2026-06-20', venue: 'New Jersey', group: 'K', time: '13:00' },
+  { id: 'G-K-4', team1: 'K2', team2: 'K4', date: '2026-06-20', venue: 'Inglewood', group: 'K', time: '16:00' },
+  { id: 'G-K-5', team1: 'K4', team2: 'K2', date: '2026-06-24', venue: 'New Jersey', group: 'K', time: '19:00' },
+  { id: 'G-K-6', team1: 'K3', team2: 'K1', date: '2026-06-24', venue: 'Inglewood', group: 'K', time: '16:00' },
+  // Grupo L
+  { id: 'G-L-1', team1: 'L1', team2: 'L4', date: '2026-06-16', venue: 'Miami', group: 'L', time: '13:00' },
+  { id: 'G-L-2', team1: 'L2', team2: 'L3', date: '2026-06-16', venue: 'Houston', group: 'L', time: '16:00' },
+  { id: 'G-L-3', team1: 'L1', team2: 'L3', date: '2026-06-20', venue: 'Miami', group: 'L', time: '19:00' },
+  { id: 'G-L-4', team1: 'L2', team2: 'L4', date: '2026-06-20', venue: 'Houston', group: 'L', time: '16:00' },
+  { id: 'G-L-5', team1: 'L4', team2: 'L2', date: '2026-06-24', venue: 'Atlanta', group: 'L', time: '19:00' },
+  { id: 'G-L-6', team1: 'L3', team2: 'L1', date: '2026-06-24', venue: 'Miami', group: 'L', time: '16:00' }
 ];
 
+// ============ PARTIDOS ELIMINATORIOS ============
+const KNOCKOUT_MATCHES = [
+  // Octavos de Final
+  { id: 'OCT-1', team1: 'A1', team2: 'C2', date: '2026-06-27', venue: 'Seattle', round: 'octavos', time: '13:00' },
+  { id: 'OCT-2', team1: 'C1', team2: 'A2', date: '2026-06-27', venue: 'Kansas City', round: 'octavos', time: '16:00' },
+  { id: 'OCT-3', team1: 'B1', team2: 'D2', date: '2026-06-27', venue: 'Toronto', round: 'octavos', time: '19:00' },
+  { id: 'OCT-4', team1: 'D1', team2: 'B2', date: '2026-06-28', venue: 'Inglewood', round: 'octavos', time: '13:00' },
+  { id: 'OCT-5', team1: 'E1', team2: 'H2', date: '2026-06-28', venue: 'Miami', round: 'octavos', time: '16:00' },
+  { id: 'OCT-6', team1: 'G1', team2: 'F2', date: '2026-06-28', venue: 'Boston', round: 'octavos', time: '19:00' },
+  { id: 'OCT-7', team1: 'F1', team2: 'G2', date: '2026-06-29', venue: 'Philadelphia', round: 'octavos', time: '13:00' },
+  { id: 'OCT-8', team1: 'H1', team2: 'E2', date: '2026-06-29', venue: 'Houston', round: 'octavos', time: '16:00' },
+  { id: 'OCT-9', team1: 'I1', team2: 'L2', date: '2026-06-29', venue: 'New Jersey', round: 'octavos', time: '19:00' },
+  { id: 'OCT-10', team1: 'K1', team2: 'J2', date: '2026-06-30', venue: 'Atlanta', round: 'octavos', time: '13:00' },
+  { id: 'OCT-11', team1: 'J1', team2: 'K2', date: '2026-06-30', venue: 'Dallas', round: 'octavos', time: '16:00' },
+  { id: 'OCT-12', team1: 'L1', team2: 'I2', date: '2026-06-30', venue: 'San Antonio', round: 'octavos', time: '19:00' },
+  // Cuartos de Final
+  { id: 'CUA-1', team1: 'OCT-1', team2: 'OCT-2', date: '2026-07-03', venue: 'Seattle', round: 'cuartos', time: '13:00' },
+  { id: 'CUA-2', team1: 'OCT-3', team2: 'OCT-4', date: '2026-07-03', venue: 'Inglewood', round: 'cuartos', time: '16:00' },
+  { id: 'CUA-3', team1: 'OCT-5', team2: 'OCT-6', date: '2026-07-03', venue: 'New Jersey', round: 'cuartos', time: '19:00' },
+  { id: 'CUA-4', team1: 'OCT-7', team2: 'OCT-8', date: '2026-07-04', venue: 'Miami', round: 'cuartos', time: '13:00' },
+  { id: 'CUA-5', team1: 'OCT-9', team2: 'OCT-10', date: '2026-07-04', venue: 'Boston', round: 'cuartos', time: '16:00' },
+  { id: 'CUA-6', team1: 'OCT-11', team2: 'OCT-12', date: '2026-07-04', venue: 'Kansas City', round: 'cuartos', time: '19:00' },
+  // Semifinales
+  { id: 'SEM-1', team1: 'CUA-1', team2: 'CUA-2', date: '2026-07-08', venue: 'New Jersey', round: 'semifinal', time: '16:00' },
+  { id: 'SEM-2', team1: 'CUA-3', team2: 'CUA-4', date: '2026-07-08', venue: 'Dallas', round: 'semifinal', time: '20:00' },
+  // Tercer Lugar
+  { id: 'TER', team1: 'SEM-1', team2: 'SEM-2', date: '2026-07-11', venue: 'Miami', round: 'tercer', time: '16:00' },
+  // Final
+  { id: 'FIN', team1: 'SEM-1', team2: 'SEM-2', date: '2026-07-12', venue: 'Inglewood', round: 'final', time: '19:00' }
+];
+
+// ============ RESULTADOS OFICIALES ============
+const OFFICIAL_RESULTS = {
+  // Grupo A
+  'G-A-1': { team1Score: 2, team2Score: 0 },
+  'G-A-2': { team1Score: 2, team2Score: 1 },
+  //'G-A-3': { team1Score: null, team2Score: null },
+  //'G-A-4': { team1Score: null, team2Score: null },
+  //'G-A-5': { team1Score: null, team2Score: null },
+  //'G-A-6': { team1Score: null, team2Score: null },
+  // Grupo B
+  'G-B-1': { team1Score: 1, team2Score: 1 },
+  'G-B-2': { team1Score: 1, team2Score: 1 },
+  //'G-B-3': { team1Score: null, team2Score: null },
+  //'G-B-4': { team1Score: null, team2Score: null },
+  //'G-B-5': { team1Score: null, team2Score: null },
+  //'G-B-6': { team1Score: null, team2Score: null },
+  // Grupo C
+  'G-C-1': { team1Score: 1, team2Score: 1 },
+  'G-C-2': { team1Score: 0, team2Score: 1 },
+  //'G-C-3': { team1Score: null, team2Score: null },
+  //'G-C-4': { team1Score: null, team2Score: null },
+  //'G-C-5': { team1Score: null, team2Score: null },
+  //'G-C-6': { team1Score: null, team2Score: null },
+  // Grupo D
+  'G-D-1': { team1Score: 4, team2Score: 1 },
+  'G-D-2': { team1Score: 0, team2Score: 2 },
+  //'G-D-3': { team1Score: null, team2Score: null },
+  //'G-D-4': { team1Score: null, team2Score: null },
+  //'G-D-5': { team1Score: null, team2Score: null },
+  //'G-D-6': { team1Score: null, team2Score: null },
+  // Grupo E
+  'G-E-1': { team1Score: 7, team2Score: 1 },
+  'G-E-2': { team1Score: 0, team2Score: 1 },
+  //'G-E-3': { team1Score: null, team2Score: null },
+  //'G-E-4': { team1Score: null, team2Score: null },
+  //'G-E-5': { team1Score: null, team2Score: null },
+  //'G-E-6': { team1Score: null, team2Score: null },
+  // Grupo F
+  'G-F-1': { team1Score: 2, team2Score: 2 },
+  'G-F-2': { team1Score: 1, team2Score: 5 },
+  //'G-F-3': { team1Score: null, team2Score: null },
+  //'G-F-4': { team1Score: null, team2Score: null },
+  //'G-F-5': { team1Score: null, team2Score: null },
+  //'G-F-6': { team1Score: null, team2Score: null },
+  // Grupo G
+  'G-G-1': { team1Score: 1, team2Score: 1 },
+  'G-G-2': { team1Score: 2, team2Score: 2 },
+  //'G-G-3': { team1Score: null, team2Score: null },
+  //'G-G-4': { team1Score: null, team2Score: null },
+  //'G-G-5': { team1Score: null, team2Score: null },
+  //'G-G-6': { team1Score: null, team2Score: null },
+  // Grupo H
+  'G-H-1': { team1Score: 0, team2Score: 0 },
+  'G-H-2': { team1Score: 1, team2Score: 1 },
+  //'G-H-3': { team1Score: null, team2Score: null },
+  //'G-H-4': { team1Score: null, team2Score: null },
+  //'G-H-5': { team1Score: null, team2Score: null },
+  //'G-H-6': { team1Score: null, team2Score: null },
+  // Grupo I (pendiente)
+  //'G-I-1': { team1Score: null, team2Score: null },
+  //'G-I-2': { team1Score: null, team2Score: null },
+  //'G-I-3': { team1Score: null, team2Score: null },
+  //'G-I-4': { team1Score: null, team2Score: null },
+  //'G-I-5': { team1Score: null, team2Score: null },
+  //'G-I-6': { team1Score: null, team2Score: null },
+  // Grupo J (pendiente)
+  //'G-J-1': { team1Score: null, team2Score: null },
+  //'G-J-2': { team1Score: null, team2Score: null },
+  //'G-J-3': { team1Score: null, team2Score: null },
+  //'G-J-4': { team1Score: null, team2Score: null },
+  //'G-J-5': { team1Score: null, team2Score: null },
+  //'G-J-6': { team1Score: null, team2Score: null },
+  // Grupo K (pendiente)
+  //'G-K-1': { team1Score: null, team2Score: null },
+  //'G-K-2': { team1Score: null, team2Score: null },
+  //'G-K-3': { team1Score: null, team2Score: null },
+  //'G-K-4': { team1Score: null, team2Score: null },
+  //'G-K-5': { team1Score: null, team2Score: null },
+  //'G-K-6': { team1Score: null, team2Score: null },
+  // Grupo L (pendiente)
+  //'G-L-1': { team1Score: null, team2Score: null },
+  //'G-L-2': { team1Score: null, team2Score: null },
+  //'G-L-3': { team1Score: null, team2Score: null },
+  //'G-L-4': { team1Score: null, team2Score: null },
+  //'G-L-5': { team1Score: null, team2Score: null },
+  //'G-L-6': { team1Score: null, team2Score: null },
+};
+
+// ============ ESTADO ============
 let state = { currentUser: null, isAdmin: false, users: {}, predictions: {}, results: {} };
 let currentGroup = 'A';
 
+// ============ FIREBASE HELPERS ============
 function firebaseGet(path) {
   return db.ref(path).once('value').then(snap => snap.val() || {});
 }
@@ -355,6 +558,7 @@ async function firebaseUpdate(path, data) {
   return db.ref(path).update(data);
 }
 
+// ============ AUTH ============
 function showRegister() {
   document.getElementById('loginForm').style.display = 'none';
   document.getElementById('registerForm').style.display = 'block';
@@ -420,6 +624,7 @@ function logout() {
   updateUI();
 }
 
+// ============ UI ============
 async function updateUI() {
   const session = localStorage.getItem('polla_session');
   if (session && !state.currentUser) {
@@ -457,13 +662,19 @@ async function showTab(tab) {
   document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
   document.querySelector(`.nav button[data-tab="${tab}"]`).classList.add('active');
 
-  ['predictionsTab', 'leaderboardTab', 'adminTab'].forEach(id => {
+  ['predictionsTab', 'standingsTab', 'knockoutTab', 'leaderboardTab', 'adminTab'].forEach(id => {
     document.getElementById(id).classList.add('hidden');
   });
 
   if (tab === 'predictions') {
     document.getElementById('predictionsTab').classList.remove('hidden');
     await loadPredictions();
+  } else if (tab === 'standings') {
+    document.getElementById('standingsTab').classList.remove('hidden');
+    renderStandings();
+  } else if (tab === 'knockout') {
+    document.getElementById('knockoutTab').classList.remove('hidden');
+    renderKnockout();
   } else if (tab === 'leaderboard') {
     document.getElementById('leaderboardTab').classList.remove('hidden');
     await loadLeaderboard();
@@ -474,6 +685,7 @@ async function showTab(tab) {
   }
 }
 
+// ============ PREDICCIONES ============
 async function loadPredictions() {
   const [users, preds, results] = await Promise.all([
     firebaseGet('users'),
@@ -483,10 +695,10 @@ async function loadPredictions() {
   
   state.users = users || {};
   state.predictions = preds || {};
-  state.results = results || {};
+  state.results = { ...OFFICIAL_RESULTS, ...results };
 
   const tabsHtml = ['A','B','C','D','E','F','G','H','I','J','K','L'].map(g => 
-    `<button class="${g === currentGroup ? 'active' : ''}" onclick="showGroup('${g}')">${g}</button>`
+    `<button class="${g === currentGroup ? 'active' : ''}" onclick="showGroup('${g}')">Grupo ${g}</button>`
   ).join('');
   document.getElementById('groupTabs').innerHTML = tabsHtml;
 
@@ -497,15 +709,17 @@ async function loadPredictions() {
 function showGroup(group) {
   currentGroup = group;
   document.querySelectorAll('#groupTabs button').forEach(b => {
-    b.classList.toggle('active', b.textContent === group);
+    b.classList.toggle('active', b.textContent === 'Grupo ' + group);
   });
   renderMatches();
 }
 
 function renderMatches() {
-  const groupMatches = MATCHES.filter(m => m.group === currentGroup);
+  const groupMatches = GROUP_MATCHES.filter(m => m.group === currentGroup);
   document.getElementById('matchesContent').innerHTML = `
-    <div style="margin-bottom:10px;"><span class="group-badge">Grupo ${currentGroup}</span></div>
+    <div style="margin-bottom:16px;">
+      <span class="group-badge">Grupo ${currentGroup}</span>
+    </div>
     ${groupMatches.map(m => renderMatch(m)).join('')}
   `;
 }
@@ -514,21 +728,33 @@ function renderMatch(m) {
   const t1 = TEAMS[m.team1], t2 = TEAMS[m.team2];
   const pred = state.predictions[state.currentUser]?.[m.id] || {};
   const result = state.results[m.id];
-  const completed = !!result;
+  const completed = !!result && result.team1Score !== null;
 
   return `
     <div class="match ${completed ? 'completed' : ''}">
-      <div class="match-info"><span>${m.date} · ${m.venue}</span></div>
-      <div class="match-teams">
-        <div class="team"><span class="flag">${FLAGS[t1.flag]}</span><span class="team-name">${t1.name}</span></div>
-        <div class="score-inputs">
-          <input type="number" class="score-input" id="p1_${m.id}" value="${pred.team1Score ?? ''}" placeholder="${result ? result.team1Score : '?'}" ${completed ? 'disabled' : ''} min="0" max="15" onchange="updatePred('${m.id}', 'team1Score', this.value)">
-          <span class="vs">-</span>
-          <input type="number" class="score-input" id="p2_${m.id}" value="${pred.team2Score ?? ''}" placeholder="${result ? result.team2Score : '?'}" ${completed ? 'disabled' : ''} min="0" max="15" onchange="updatePred('${m.id}', 'team2Score', this.value)">
-        </div>
-        <div class="team right"><span class="flag">${FLAGS[t2.flag]}</span><span class="team-name">${t2.name}</span></div>
+      <div class="match-info">
+        <span>📅 ${m.date} · ⏰ ${m.time} · 📍 ${m.venue}</span>
+        ${completed ? '<span class="status completed">✅ FINAL</span>' : '<span class="status scheduled">⏳ Pendiente</span>'}
       </div>
-      ${completed ? `<span class="status completed">✅ ${result.team1Score} - ${result.team2Score}</span>` : ''}
+      <div class="match-teams">
+        <div class="team">
+          <span class="flag">${FLAGS[t1.flag]}</span>
+          <span class="team-name">${t1.name}</span>
+        </div>
+        ${completed ? `
+          <div class="final-score">${result.team1Score} - ${result.team2Score}</div>
+        ` : `
+          <div class="score-inputs">
+            <input type="number" class="score-input" id="p1_${m.id}" value="${pred.team1Score ?? ''}" placeholder="?" ${completed ? 'disabled' : ''} min="0" max="15" onchange="updatePred('${m.id}', 'team1Score', this.value)">
+            <span class="vs">-</span>
+            <input type="number" class="score-input" id="p2_${m.id}" value="${pred.team2Score ?? ''}" placeholder="?" ${completed ? 'disabled' : ''} min="0" max="15" onchange="updatePred('${m.id}', 'team2Score', this.value)">
+          </div>
+        `}
+        <div class="team right">
+          <span class="flag">${FLAGS[t2.flag]}</span>
+          <span class="team-name">${t2.name}</span>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -539,8 +765,8 @@ async function updatePred(matchId, team, value) {
 }
 
 function updatePendingCount() {
-  const total = MATCHES.length;
-  const predicted = state.predictions[state.currentUser] ? Object.keys(state.predictions[state.currentUser]).length : 0;
+  const total = GROUP_MATCHES.length;
+  const predicted = state.predictions[state.currentUser] ? Object.keys(state.predictions[state.currentUser]).filter(k => k.startsWith('G-')).length : 0;
   const pending = total - predicted;
   document.getElementById('pendingBadge').textContent = pending;
   document.getElementById('pendingCount').textContent = `(${pending})`;
@@ -548,15 +774,139 @@ function updatePendingCount() {
 
 function savePredictions() { showToast('¡Pronósticos guardados!'); }
 
+// ============ STANDINGS ============
+function renderStandings() {
+  let html = '';
+  ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(group => {
+    const standings = calculateGroupStanding(group);
+    html += `
+      <div style="margin-bottom: 24px;">
+        <span class="group-badge" style="margin-bottom: 12px; display: inline-block;">Grupo ${group}</span>
+        <table class="standing-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Equipo</th>
+              <th>JJ</th>
+              <th>G</th>
+              <th>E</th>
+              <th>P</th>
+              <th>GF</th>
+              <th>GC</th>
+              <th>DG</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${standings.map((s, i) => `
+              <tr>
+                <td class="pos">${i + 1}</td>
+                <td class="team-cell">
+                  <span class="flag">${FLAGS[TEAMS[s.team].flag]}</span>
+                  ${TEAMS[s.team].name}
+                  ${i < 2 ? '<span class="qualify">✓</span>' : ''}
+                </td>
+                <td>${s.jj}</td>
+                <td>${s.g}</td>
+                <td>${s.e}</td>
+                <td>${s.p}</td>
+                <td>${s.gf}</td>
+                <td>${s.gc}</td>
+                <td>${s.dg}</td>
+                <td class="points-col">${s.pts}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  });
+  document.getElementById('standingsContent').innerHTML = html;
+}
+
+function calculateGroupStanding(group) {
+  const groupMatches = GROUP_MATCHES.filter(m => m.group === group);
+  const teamKeys = groupMatches.flatMap(m => [m.team1, m.team2]).filter((v, i, a) => a.indexOf(v) === i);
+  
+  let standings = teamKeys.map(team => ({
+    team,
+    jj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, dg: 0, pts: 0
+  }));
+
+  groupMatches.forEach(m => {
+    const result = state.results[m.id];
+    if (!result || result.team1Score === null) return;
+    
+    const home = standings.find(s => s.team === m.team1);
+    const away = standings.find(s => s.team === m.team2);
+    
+    home.jj++; away.jj++;
+    home.gf += result.team1Score; away.gc += result.team1Score;
+    away.gf += result.team2Score; home.gc += result.team2Score;
+    
+    if (result.team1Score > result.team2Score) { home.g++; home.pts += 3; away.p++; }
+    else if (result.team1Score < result.team2Score) { away.g++; away.pts += 3; home.p++; }
+    else { home.e++; away.e++; home.pts++; away.pts++; }
+  });
+
+  standings.forEach(s => { s.dg = s.gf - s.gc; });
+  return standings.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
+}
+
+// ============ KNOCKOUT ============
+function renderKnockout() {
+  const octavos = KNOCKOUT_MATCHES.filter(m => m.round === 'octavos');
+  const cuartos = KNOCKOUT_MATCHES.filter(m => m.round === 'cuartos');
+  const semis = KNOCKOUT_MATCHES.filter(m => m.round === 'semifinal');
+  const final = KNOCKOUT_MATCHES.find(m => m.round === 'final');
+
+  document.getElementById('octavosContent').innerHTML = octavos.map(m => renderKnockoutMatch(m)).join('');
+  document.getElementById('cuartosContent').innerHTML = cuartos.map(m => renderKnockoutMatch(m)).join('');
+  document.getElementById('semifinalContent').innerHTML = semis.map(m => renderKnockoutMatch(m)).join('');
+  document.getElementById('finalContent').innerHTML = renderKnockoutMatch(final);
+}
+
+function renderKnockoutMatch(m) {
+  const t1 = TEAMS[m.team1] || { name: '?', flag: '❓' };
+  const t2 = TEAMS[m.team2] || { name: '?', flag: '❓' };
+  const result = state.results[m.id];
+  const completed = !!result && result.team1Score !== null;
+
+  return `
+    <div class="match ${completed ? 'completed' : ''}" style="margin-bottom: 8px;">
+      <div class="match-info">
+        <span>📅 ${m.date} · ⏰ ${m.time} · 📍 ${m.venue}</span>
+        ${completed ? '<span class="status completed">✅ FINAL</span>' : '<span class="status scheduled">⏳ Pendiente</span>'}
+      </div>
+      <div class="match-teams">
+        <div class="team">
+          <span class="flag">${FLAGS[t1.flag] || '❓'}</span>
+          <span class="team-name">${t1.name}</span>
+        </div>
+        ${completed ? `
+          <div class="final-score ${result.team1Score > result.team2Score ? 'win' : 'lose'}">${result.team1Score} - ${result.team2Score}</div>
+        ` : `
+          <div class="vs">VS</div>
+        `}
+        <div class="team right">
+          <span class="team-name">${t2.name}</span>
+          <span class="flag">${FLAGS[t2.flag] || '❓'}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============ LEADERBOARD ============
 async function loadLeaderboard() {
   const [users, results] = await Promise.all([firebaseGet('users'), firebaseGet('results')]);
   state.users = users || {};
-  state.results = results || {};
+  state.results = { ...OFFICIAL_RESULTS, ...results };
 
   document.getElementById('statsBar').innerHTML = `
     <div class="stat-card"><div class="stat-value">${Object.keys(state.users).length}</div><div class="stat-label">Participantes</div></div>
-    <div class="stat-card"><div class="stat-value">${Object.keys(state.results || {}).length}</div><div class="stat-label">Resultados</div></div>
-    <div class="stat-card"><div class="stat-value">-</div><div class="stat-label">Líder tiene</div></div>
+    <div class="stat-card"><div class="stat-value">${Object.keys(state.results || {}).filter(k => k.startsWith('G-')).length}/72</div><div class="stat-label">Partidos Jugados</div></div>
+    <div class="stat-card"><div class="stat-value">${calculateLeader().score || 0}</div><div class="stat-label">Líder tiene pts</div></div>
   `;
 
   const sorted = Object.entries(state.users)
@@ -567,7 +917,7 @@ async function loadLeaderboard() {
   document.getElementById('leaderboardContent').innerHTML = sorted.length === 0 
     ? '<p style="text-align:center;color:#94a3b8;padding:40px;">Sin participantes aún. ¡Invita a tus amigos!</p>'
     : sorted.map((u, i) => `
-      <div class="leaderboard-item ${i === 0 ? 'top1' : ''}">
+      <div class="leaderboard-item ${i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : ''}">
         <div class="rank rank-${i+1}">${i+1}</div>
         <div class="avatar">${u.name.charAt(0).toUpperCase()}</div>
         <div><div class="name">${u.name}${i===0?' 👑':''}</div></div>
@@ -576,10 +926,22 @@ async function loadLeaderboard() {
     `).join('');
 }
 
+function calculateLeader() {
+  const preds = state.predictions || {};
+  let maxScore = 0;
+  let leaderId = null;
+  Object.entries(preds).forEach(([userId, userPreds]) => {
+    const score = calculateScore(userId);
+    if (score > maxScore) { maxScore = score; leaderId = userId; }
+  });
+  return { id: leaderId, score: maxScore };
+}
+
 function calculateScore(userId) {
   let total = 0;
   const preds = state.predictions[userId] || {};
   Object.entries(state.results || {}).forEach(([matchId, result]) => {
+    if (!matchId.startsWith('G-')) return;
     const pred = preds[matchId];
     if (!pred || pred.team1Score === undefined) return;
     const p1 = pred.team1Score, p2 = pred.team2Score, r1 = result.team1Score, r2 = result.team2Score;
@@ -593,36 +955,37 @@ function calculateScore(userId) {
   return total;
 }
 
+// ============ ADMIN ============
 async function loadAdmin() {
   const results = await firebaseGet('results');
-  state.results = results || {};
+  state.results = { ...OFFICIAL_RESULTS, ...results };
 
-  let html = '';
-  MATCHES.forEach(m => {
+  let html = '<h4 style="color:var(--accent-gold);margin-bottom:12px;">📋 Partidos de Grupos (Fase 1)</h4>';
+  GROUP_MATCHES.filter(m => !state.results[m.id] || state.results[m.id].team1Score === null).forEach(m => {
     const t1 = TEAMS[m.team1], t2 = TEAMS[m.team2];
-    if (!state.results[m.id]) {
-      html += `<div class="admin-match">
-        <div><span class="flag">${FLAGS[t1.flag]}</span> ${t1.name} <strong>vs</strong> ${t2.name} <span class="flag">${FLAGS[t2.flag]}</span></div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="number" class="admin-input" id="r1_${m.id}" placeholder="0" min="0" max="15">
-          <span>-</span>
-          <input type="number" class="admin-input" id="r2_${m.id}" placeholder="0" min="0" max="15">
-          <button class="btn btn-success" onclick="submitResult('${m.id}')" style="width:auto;padding:6px 12px;">OK</button>
-        </div>
-      </div>`;
-    }
+    html += `<div class="admin-match">
+      <div><span class="flag">${FLAGS[t1.flag]}</span> ${t1.name} <strong>vs</strong> ${t2.name} <span class="flag">${FLAGS[t2.flag]}</span></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" class="admin-input" id="r1_${m.id}" placeholder="0" min="0" max="15">
+        <span>-</span>
+        <input type="number" class="admin-input" id="r2_${m.id}" placeholder="0" min="0" max="15">
+        <button class="btn btn-success btn-small" onclick="submitResult('${m.id}')">OK</button>
+      </div>
+    </div>`;
   });
 
-  document.getElementById('adminContent').innerHTML = html || '<p style="color:var(--mundial-green);">🎉 Todos los partidos tienen resultado</p>';
+  document.getElementById('adminContent').innerHTML = html || '<p style="color:var(--mundial-green);">🎉 Todos los partidos de grupo tienen resultado</p>';
 
-  const history = Object.entries(state.results);
+  const history = Object.entries(state.results).filter(([k, v]) => v && v.team1Score !== null);
   document.getElementById('historyContent').innerHTML = history.length === 0
     ? '<p style="color:#64748b;">Sin resultados aún</p>'
     : history.map(([id, r]) => {
-      const m = MATCHES.find(x => x.id === id);
+      const m = GROUP_MATCHES.find(x => x.id === id);
+      if (!m) return '';
       const t1 = TEAMS[m.team1], t2 = TEAMS[m.team2];
       return `<p style="padding:10px;background:var(--bg-card);border-radius:6px;margin-bottom:8px;">
         <span class="flag">${FLAGS[t1.flag]}</span> ${t1.name} <strong style="color:var(--mundial-green);margin:0 8px;">${r.team1Score} - ${r.team2Score}</strong> ${t2.name} <span class="flag">${FLAGS[t2.flag]}</span>
+        <span style="color:#64748b;margin-left:8px;font-size:0.8rem;">${m.date}</span>
       </p>`;
     }).join('');
 }
@@ -634,8 +997,10 @@ async function submitResult(matchId) {
   await firebaseUpdate(`results/${matchId}`, { team1Score: r1, team2Score: r2, timestamp: Date.now() });
   showToast(`Resultado: ${r1}-${r2}`);
   loadAdmin();
+  renderStandings();
 }
 
+// ============ TOAST ============
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
   toast.textContent = message;
@@ -643,20 +1008,31 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
+// ============ INIT ============
 document.addEventListener('DOMContentLoaded', () => {
   updateUI();
+  
+  // Cargar resultados oficiales al inicio
+  Object.entries(OFFICIAL_RESULTS).forEach(async ([matchId, result]) => {
+    const existing = await firebaseGet(`results/${matchId}`);
+    if (!existing || existing.team1Score === null) {
+      await firebaseUpdate(`results/${matchId}`, result);
+    }
+  });
+
   setInterval(async () => {
     if (state.currentUser) {
       const results = await firebaseGet('results');
       if (results) {
-        state.results = results;
+        state.results = { ...OFFICIAL_RESULTS, ...results };
         const activeTab = document.querySelector('.nav button.active')?.dataset.tab;
         if (activeTab === 'predictions') renderMatches();
+        if (activeTab === 'standings') renderStandings();
         if (activeTab === 'leaderboard') loadLeaderboard();
       }
     }
   }, 30000);
 });
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0cc76ed48c1c2a1',t:'MTc4MTY0MDY5NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
