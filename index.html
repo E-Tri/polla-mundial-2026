@@ -295,47 +295,89 @@ const db = firebase.database();
 
 // ============ BANDERAS ============
 const FLAGS = {
-  mx: '🇲🇽', kr: '🇰🇷', cz: '🇨🇿', za: '🇿🇦',
-  ch: '🇨🇭', ca: '🇨🇦', qa: '🇶🇦', ba: '🇧🇦',
-  br: '🇧🇷', ma: '🇲🇦', sc: '🏴󠁧󠁢󠁳󠁣󠁿', ht: '🇭🇹',
-  us: '🇺🇸', tr: '🇹🇷', au: '🇦🇺', py: '🇵🇾',
-  de: '🇩🇪', ec: '🇪🇨', ci: '🇨🇮', cw: '🇨🇼',
-  nl: '🇳🇱', jp: '🇯🇵', se: '🇸🇪', tn: '🇹🇳',
-  be: '🇧🇪', ir: '🇮🇷', eg: '🇪🇬', nz: '🇳🇿',
-  es: '🇪🇸', uy: '🇺🇾', sa: '🇸🇦', cv: '🇨🇻',
-  fr: '🇫🇷', sn: '🇸🇳', no: '🇳🇴', iq: '🇮🇶',
-  ar: '🇦🇷', dz: '🇩🇿', at: '🇦🇹', jo: '🇯🇴',
-  pt: '🇵🇹', co: '🇨🇴', jm: '🇯🇲', uz: '🇺🇿',
-  gb: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', hr: '🇭🇷', pa: '🇵🇦', gh: '🇬🇭',
-  ng: '🇳🇬', mw: '🇲🇼', za2: '🇿🇦', ke: '🇰🇪'
+  // Norteamerica
+  mx: '🇲🇽', us: '🇺🇸', ca: '🇨🇦',
+  // America del Sur
+  br: '🇧🇷', ar: '🇦🇷', uy: '🇺🇾', co: '🇨🇴', py: '🇵🇾', ec: '🇪🇨', 
+  // America Central y Caribe
+  ht: '🇭🇹', jm: '🇯🇲', pa: '🇵🇦', 
+  // Europa
+  de: '🇩🇪', es: '🇪🇸', fr: '🇫🇷', gb: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', it: '🇮🇹', pt: '🇵🇹',
+  nl: '🇳🇱', be: '🇧🇪', ch: '🇨🇭', at: '🇦🇹', se: '🇸🇪', no: '🇳🇴',
+  cz: '🇨🇿', hr: '🇭🇷', tr: '🇹🇷',
+  // Africa
+  za: '🇿🇦', eg: '🇪🇬', ma: '🇲🇦', dz: '🇩🇿', tn: '🇹🇳', gh: '🇬🇭',
+  sn: '🇸🇳', ci: '🇨🇮',
+  // Asia
+  jp: '🇯🇵', kr: '🇰🇷', ir: '🇮🇷', iq: '🇮🇶', sa: '🇸🇦', qa: '🇶🇦', jo: '🇯🇴', uz: '🇺🇿',
+  // Oceania
+  au: '🇦🇺', nz: '🇳🇿', 
+  // Otros
+  cv: '🇨🇻', cw: '🇨🇼', ba: '🇧🇦', sc: '🏴󠁧󠁢󠁳󠁣󠁿'
 };
 
 // ============ EQUIPOS ============
 const TEAMS = {
-  A1: { name: "Mexico", flag: "mx" }, A2: { name: "South Korea", flag: "kr" },
-  A3: { name: "Czechia", flag: "cz" }, A4: { name: "South Africa", flag: "za" },
-  B1: { name: "Switzerland", flag: "ch" }, B2: { name: "Canada", flag: "ca" },
-  B3: { name: "Qatar", flag: "qa" }, B4: { name: "Bosnia & Herz.", flag: "ba" },
-  C1: { name: "Brazil", flag: "br" }, C2: { name: "Morocco", flag: "ma" },
-  C3: { name: "Scotland", flag: "sc" }, C4: { name: "Haiti", flag: "ht" },
-  D1: { name: "USA", flag: "us" }, D2: { name: "Turkey", flag: "tr" },
-  D3: { name: "Australia", flag: "au" }, D4: { name: "Paraguay", flag: "py" },
-  E1: { name: "Germany", flag: "de" }, E2: { name: "Ecuador", flag: "ec" },
-  E3: { name: "Ivory Coast", flag: "ci" }, E4: { name: "Curaçao", flag: "cw" },
-  F1: { name: "Netherlands", flag: "nl" }, F2: { name: "Japan", flag: "jp" },
-  F3: { name: "Sweden", flag: "se" }, F4: { name: "Tunisia", flag: "tn" },
-  G1: { name: "Belgium", flag: "be" }, G2: { name: "Iran", flag: "ir" },
-  G3: { name: "Egypt", flag: "eg" }, G4: { name: "New Zealand", flag: "nz" },
-  H1: { name: "Spain", flag: "es" }, H2: { name: "Uruguay", flag: "uy" },
-  H3: { name: "Saudi Arabia", flag: "sa" }, H4: { name: "Cape Verde", flag: "cv" },
-  I1: { name: "France", flag: "fr" }, I2: { name: "Senegal", flag: "sn" },
-  I3: { name: "Norway", flag: "no" }, I4: { name: "Iraq", flag: "iq" },
-  J1: { name: "Argentina", flag: "ar" }, J2: { name: "Algeria", flag: "dz" },
-  J3: { name: "Austria", flag: "at" }, J4: { name: "Jordan", flag: "jo" },
-  K1: { name: "Portugal", flag: "pt" }, K2: { name: "Colombia", flag: "co" },
-  K3: { name: "Jamaica", flag: "jm" }, K4: { name: "Uzbekistan", flag: "uz" },
-  L1: { name: "England", flag: "gb" }, L2: { name: "Croatia", flag: "hr" },
-  L3: { name: "Panama", flag: "pa" }, L4: { name: "Ghana", flag: "gh" }
+  // Grupo A
+  A1: { name: "Mexico", flag: "mx" },
+  A2: { name: "South Korea", flag: "kr" },
+  A3: { name: "Czechia", flag: "cz" },
+  A4: { name: "South Africa", flag: "za" },
+  // Grupo B
+  B1: { name: "Switzerland", flag: "ch" },
+  B2: { name: "Canada", flag: "ca" },
+  B3: { name: "Qatar", flag: "qa" },
+  B4: { name: "Bosnia & Herz.", flag: "ba" },
+  // Grupo C
+  C1: { name: "Brazil", flag: "br" },
+  C2: { name: "Morocco", flag: "ma" },
+  C3: { name: "Scotland", flag: "sc" },
+  C4: { name: "Haiti", flag: "ht" },
+  // Grupo D
+  D1: { name: "USA", flag: "us" },
+  D2: { name: "Turkey", flag: "tr" },
+  D3: { name: "Australia", flag: "au" },
+  D4: { name: "Paraguay", flag: "py" },
+  // Grupo E
+  E1: { name: "Germany", flag: "de" },
+  E2: { name: "Ecuador", flag: "ec" },
+  E3: { name: "Ivory Coast", flag: "ci" },
+  E4: { name: "Curaçao", flag: "cw" },
+  // Grupo F
+  F1: { name: "Netherlands", flag: "nl" },
+  F2: { name: "Japan", flag: "jp" },
+  F3: { name: "Sweden", flag: "se" },
+  F4: { name: "Tunisia", flag: "tn" },
+  // Grupo G
+  G1: { name: "Belgium", flag: "be" },
+  G2: { name: "Iran", flag: "ir" },
+  G3: { name: "Egypt", flag: "eg" },
+  G4: { name: "New Zealand", flag: "nz" },
+  // Grupo H
+  H1: { name: "Spain", flag: "es" },
+  H2: { name: "Uruguay", flag: "uy" },
+  H3: { name: "Saudi Arabia", flag: "sa" },
+  H4: { name: "Cape Verde", flag: "cv" },
+  // Grupo I
+  I1: { name: "France", flag: "fr" },
+  I2: { name: "Senegal", flag: "sn" },
+  I3: { name: "Norway", flag: "no" },
+  I4: { name: "Iraq", flag: "iq" },
+  // Grupo J
+  J1: { name: "Argentina", flag: "ar" },
+  J2: { name: "Algeria", flag: "dz" },
+  J3: { name: "Austria", flag: "at" },
+  J4: { name: "Jordan", flag: "jo" },
+  // Grupo K
+  K1: { name: "Portugal", flag: "pt" },
+  K2: { name: "Colombia", flag: "co" },
+  K3: { name: "Jamaica", flag: "jm" },
+  K4: { name: "Uzbekistan", flag: "uz" },
+  // Grupo L
+  L1: { name: "England", flag: "gb" },
+  L2: { name: "Croatia", flag: "hr" },
+  L3: { name: "Panama", flag: "pa" },
+  L4: { name: "Ghana", flag: "gh" }
 };
 
 // ============ PARTIDOS DE GRUPO ============
@@ -651,10 +693,18 @@ async function updateUI() {
     }
     showTab('predictions');
   } else {
+    // OCULTAR AUTH SCREEN Y TODOS LOS TABS
     document.getElementById('authScreen').style.display = 'flex';
     document.getElementById('nav').style.display = 'none';
     document.getElementById('saveBtn').style.display = 'none';
     document.getElementById('userInfo').style.display = 'none';
+    // OCULTAR TODOS LOS TABS
+    ['predictionsTab', 'standingsTab', 'knockoutTab', 'leaderboardTab', 'adminTab'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    // OCULTAR ADMIN TAG
+    document.getElementById('adminTag').style.display = 'none';
+    document.getElementById('adminBtn').classList.add('hidden');
   }
 }
 
@@ -1010,6 +1060,11 @@ function showToast(message, type = 'success') {
 
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', () => {
+  // OCULTAR TODOS LOS TABS AL INICIO
+  ['predictionsTab', 'standingsTab', 'knockoutTab', 'leaderboardTab', 'adminTab'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  
   updateUI();
   
   // Cargar resultados oficiales al inicio
@@ -1034,5 +1089,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 30000);
 });
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0cc76ed48c1c2a1',t:'MTc4MTY0MDY5NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0cc949bdb61c2a1',t:'MTc4MTY0MTkxMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
