@@ -617,45 +617,62 @@ async function doRegister() {
   const pin2 = document.getElementById('regPin2').value.trim();
   const adminCode = document.getElementById('adminCode').value.trim();
 
-  if (!name || name.length < 2) { showToast('Nombre muy corto', 'error'); return; }
-  if (!pin || pin.length !== 4 || !/^\d+$/.test(pin)) { showToast('PIN de 4 dígitos', 'error'); return; }
+  if (!name || name.length < 2) { showToast('Nombre muy corto (min 2 caracteres)', 'error'); return; }
+  if (!pin || pin.length !== 4 || !/^\d+$/.test(pin)) { showToast('PIN debe ser 4 dígitos', 'error'); return; }
   if (pin !== pin2) { showToast('PINs no coinciden', 'error'); return; }
 
-  const users = await firebaseGet('users');
-  if (Object.values(users).find(u => u.name.toLowerCase() === name.toLowerCase())) {
-    showToast('Nombre ya registrado', 'error'); return;
+  // Mostrar que está procesando
+  showToast('Creando cuenta...', 'success');
+
+  try {
+    const users = await firebaseGet('users');
+    if (Object.values(users).find(u => u.name.toLowerCase() === name.toLowerCase())) {
+      showToast('Nombre ya registrado', 'error'); return;
+    }
+
+    const userId = 'user_' + Date.now();
+    const isAdmin = adminCode === 'ADMIN2026';
+    
+    await firebaseUpdate('users/' + userId, { id: userId, name, pin, isAdmin, createdAt: Date.now() });
+    await db.ref('predictions/' + userId).set({});
+    await db.ref('knockoutSelections/' + userId).set({});
+
+    state.currentUser = userId;
+    state.isAdmin = isAdmin;
+    localStorage.setItem('polla_session', JSON.stringify({ userId, isAdmin }));
+    
+    showToast('¡Cuenta creada exitosamente!', 'success');
+    updateUI();
+  } catch (error) {
+    console.error('Error en registro:', error);
+    showToast('Error al crear cuenta. Intenta de nuevo.', 'error');
   }
-
-  const userId = 'user_' + Date.now();
-  const isAdmin = adminCode === 'ADMIN2026';
-  
-  await firebaseUpdate('users/' + userId, { id: userId, name, pin, isAdmin, createdAt: Date.now() });
-  await db.ref('predictions/' + userId).set({});
-  await db.ref('knockoutSelections/' + userId).set({});
-
-  state.currentUser = userId;
-  state.isAdmin = isAdmin;
-  localStorage.setItem('polla_session', JSON.stringify({ userId, isAdmin }));
-  
-  showToast('¡Cuenta creada!');
-  updateUI();
 }
 
 async function doLogin() {
   const name = document.getElementById('loginName').value.trim();
   const pin = document.getElementById('loginPin').value.trim();
 
-  const users = await firebaseGet('users');
-  const user = Object.values(users).find(u => u.name.toLowerCase() === name.toLowerCase() && u.pin === pin);
+  if (!name || !pin) { showToast('Ingresa nombre y PIN', 'error'); return; }
 
-  if (user) {
-    state.currentUser = user.id;
-    state.isAdmin = user.isAdmin;
-    localStorage.setItem('polla_session', JSON.stringify({ userId: user.id, isAdmin: user.isAdmin }));
-    showToast('¡Bienvenido!');
-    updateUI();
-  } else {
-    showToast('Nombre o PIN incorrecto', 'error');
+  showToast('Iniciando sesión...', 'success');
+
+  try {
+    const users = await firebaseGet('users');
+    const user = Object.values(users).find(u => u.name.toLowerCase() === name.toLowerCase() && u.pin === pin);
+
+    if (user) {
+      state.currentUser = user.id;
+      state.isAdmin = user.isAdmin;
+      localStorage.setItem('polla_session', JSON.stringify({ userId: user.id, isAdmin: user.isAdmin }));
+      showToast('¡Bienvenido!', 'success');
+      updateUI();
+    } else {
+      showToast('Nombre o PIN incorrecto', 'error');
+    }
+  } catch (error) {
+    console.error('Error en login:', error);
+    showToast('Error al iniciar sesión', 'error');
   }
 }
 
@@ -1089,5 +1106,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 30000);
 });
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0cc949bdb61c2a1',t:'MTc4MTY0MTkxMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0ccb0a45ba1a4e9',t:'MTc4MTY0MzA1OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
